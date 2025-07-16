@@ -1,1 +1,63 @@
 
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Testing the Server</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        background-color: rgb(227, 227, 227);
+      }
+      .btn {
+        background-color: rgb(0, 100, 0);
+        color: rgb(229, 229, 229);
+        height: 28px;
+        width: 100px;
+        border: black;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .result {
+        margin-left: 40%;
+        color: navy;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="text-align: center">
+      <h3>Check data from Server</h3>
+      <br />
+      <p>Server IP-address: <m id="ip"></m></p>
+      <button onclick="fetchData()" class="btn">get the data</button>
+    </div>
+    <br /><br />
+    <div class="result">
+      <pre id="result"></pre>
+    </div>
+
+    <script>
+      var ip_adr = "http://127.0.0.1";
+      document.getElementById("ip").innerText = ip_adr;
+      async function fetchData() {
+        try {
+          const response = await fetch(ip_adr);
+          if (!response.ok) {
+            throw new Error("The network is not responding ... ");
+          }
+          const data = await response.json();
+          document.getElementById("result").innerText = JSON.stringify(
+            data,
+            null,
+            2
+          );
+        } catch (error) {
+          document.getElementById("result").innerText =
+            "ERROR: " + error.message;
+        }
+      }
+    </script>
+  </body>
+</html>
