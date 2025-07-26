@@ -53,3 +53,59 @@ int audio_callback(const void* inputBuffer, void* outputBuffer,
 
     return paContinue;
 }
+
+
+int main() {
+    float carrierFreq, modulatorFreq, duration;
+
+    std::cout << "Enter carrier frequency (Hz): ";
+    std::cin >> carrierFreq;
+
+    std::cout << "Enter frequency of the modulating wave (Hz): ";
+    std::cin >> modulatorFreq;
+
+    std::cout << "Enter wave signal duration (sec): ";
+    std::cin >> duration;
+
+    WaveData waveData;
+    generate_sound(carrierFreq, modulatorFreq, duration, waveData);
+
+    PaError err = Pa_Initialize();
+    if (err != paNoError) {
+        std::cerr << "ERROR (portaudio): " << Pa_GetErrorText(err) << std::endl;
+        return 1;
+    }
+
+    PaStream* stream;
+    err = Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, audio_callback, &waveData);
+    if (err != paNoError) {
+        std::cerr << "ERROR (portaudio): " << Pa_GetErrorText(err) << std::endl;
+        Pa_Terminate();
+        return 1;
+    }
+
+    err = Pa_StartStream(stream);
+    if (err != paNoError) {
+        std::cerr << "ERROR (portaudio): " << Pa_GetErrorText(err) << std::endl;
+        Pa_CloseStream(stream);
+        Pa_Terminate();
+        return 1;
+    }
+
+    Pa_Sleep(duration * 1000);
+
+    err = Pa_StopStream(stream);
+    if (err != paNoError) {
+        std::cerr << "ERROR (portaudio): " << Pa_GetErrorText(err) << std::endl;
+    }
+
+    err = Pa_CloseStream(stream);
+    if (err != paNoError) {
+        std::cerr << "ERROR (portaudio): " << Pa_GetErrorText(err) << std::endl;
+    }
+
+    Pa_Terminate();
+
+    return 0;
+}
+
