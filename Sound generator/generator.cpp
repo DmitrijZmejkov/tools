@@ -18,3 +18,18 @@ struct WaveData {
     std::vector<float> samples;
     size_t position;
 };
+
+
+void generate_sound(float carrierFreq, float modulatorFreq, float duration, WaveData& waveData) {
+    size_t numSamples = static_cast<size_t>(SAMPLE_RATE * duration);
+    waveData.samples.resize(numSamples);
+    waveData.position = 0;
+
+    for (size_t i = 0; i < numSamples; i++) {
+        float t = static_cast<float>(i) / SAMPLE_RATE;
+        float carrierWave = 0.5f * sinf(2.0f * M_PI * carrierFreq * t);
+        float modulatorWave = 0.5f * (1.0f + sinf(2.0f * M_PI * modulatorFreq * t));
+        waveData.samples[i] = carrierWave * modulatorWave;
+    }
+}
+
