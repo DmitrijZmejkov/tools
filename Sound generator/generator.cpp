@@ -33,3 +33,23 @@ void generate_sound(float carrierFreq, float modulatorFreq, float duration, Wave
     }
 }
 
+
+int audio_callback(const void* inputBuffer, void* outputBuffer,
+    unsigned long frames_per_buffer,
+    const PaStreamCallbackTimeInfo* timeInfo,
+    PaStreamCallbackFlags statusFlags,
+    void* userData) {
+    WaveData* data = static_cast<WaveData*>(userData);
+    float* out = static_cast<float*>(outputBuffer);
+    (void)inputBuffer; // Unused variable
+
+    for (unsigned long i = 0; i < frames_per_buffer; i++) {
+        if (data->position < data->samples.size()) {
+            out[i] = data->samples[data->position++];
+        } else {
+            out[i] = 0.0f;
+        }
+    }
+
+    return paContinue;
+}
