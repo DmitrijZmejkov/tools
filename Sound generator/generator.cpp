@@ -1,4 +1,8 @@
-// 
+// Sound Generator for PC
+// Enter:
+// - carrier frequency (Hz)
+// - modulation frequency (Hz)
+// - sound signal duration (sec)
 
 #include <iostream>
 #include <cmath>
